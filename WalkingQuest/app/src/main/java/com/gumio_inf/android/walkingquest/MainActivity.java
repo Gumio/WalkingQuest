@@ -1,6 +1,8 @@
 package com.gumio_inf.android.walkingquest;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
@@ -14,12 +16,17 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private SharedPreferences pref;
 
     // モンスター
     private ImageButton monster;
     private int [] monsters;
     private int monsterNumber;
+    private Random random;
 
     // モンスターHPゲージ
     private ProgressBar hpBar;
@@ -34,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int damagedHp;
 
     // 攻撃力
-    private int attack;
+    public static int attack;
 
     // 攻撃音出す用
     private AudioAttributes audioAttributes;
@@ -62,6 +69,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        random = new Random();
+        pref = getSharedPreferences("Data", Context.MODE_PRIVATE);
+        attack = pref.getInt("attack", 0);
+
         // bgm読み込み
         bgm = MediaPlayer.create(this, R.raw.boss_bgm);
         bgm.setLooping(true);
@@ -82,9 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         magiced = soundPool.load(this, R.raw.magic_ice, 1);
         destroyed = soundPool.load(this, R.raw.monster1, 1);
 
-        attack = 10;
-
-        maxHp = 100000;
+        maxHp = pref.getInt("hp", 1000);
         damagedHp = maxHp;
         hpText = (TextView)findViewById(R.id.hp);
         hpText.setText(damagedHp + "/" + maxHp);
@@ -97,7 +106,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         monsters[0] = R.mipmap.time_dragon;
         monsters[1] = R.mipmap.red_dragon;
         monsters[2] = R.mipmap.lucifer;
-        monsterNumber = 0;
+        monsters[3] = R.mipmap.kisaragi;
+        monsters[4] = R.mipmap.unko;
+        monsters[5] = R.mipmap.mare;
+        monsters[6] = R.mipmap.cty;
+        monsters[7] = R.mipmap.kimoi;
+        monsters[8] = R.mipmap.quin;
+        monsters[9] = R.mipmap.dark;
+        monsterNumber = random.nextInt(10);
 
         // 関連付け
         monster = (ImageButton)findViewById(R.id.monster);
@@ -114,6 +130,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // リスナー登録
         attackFab.setOnClickListener(this);
         magicFab.setOnClickListener(this);
+
+        monster.setBackgroundResource(monsters[monsterNumber]);
     }
 
     @Override
@@ -143,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         // 震わす
-        vibrator.vibrate(200);
+        vibrator.vibrate(100);
 
         damagedHp -= attack;
         hpText.setText(damagedHp + "/" + maxHp);
@@ -151,8 +169,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (damagedHp <= 0) {
             soundPool.play(destroyed, 1.0f, 1.0f, 0, 0, 1);
-            monster.setBackgroundResource(monsters[++monsterNumber]);
+            monsterNumber = random.nextInt(10);
+            monster.setBackgroundResource(monsters[monsterNumber]);
             maxHp *= 2;
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putInt("hp", maxHp);
+            edit.apply();
             damagedHp = maxHp;
             hpText.setText(maxHp + "/" + maxHp);
             hpBar.setMax(maxHp);
@@ -161,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     protected void tapMapView(View v) {
-        Intent intent = new Intent(this, MapActivity.class);
+        Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
 }

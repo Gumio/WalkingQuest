@@ -67,26 +67,25 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         app:fabSize="normal"
-        app:srcCompat="@drawable/sword_icon"
-        android:layout_marginBottom="50dp"
-        android:id="@+id/attackFab"
-        app:backgroundTint="@android:color/holo_red_dark"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="17dp"
-        app:elevation="14dp" />
+        app:srcCompat="?attr/actionModeCloseDrawable"
+        android:id="@+id/mapAccessFab"
+        app:elevation="14dp"
+        android:onClick="tapMapView"
+        android:layout_alignTop="@+id/magicFab"
+        android:layout_alignStart="@+id/hpBar" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
         app:fabSize="normal"
-        app:srcCompat="?attr/actionModeCloseDrawable"
-        android:layout_alignTop="@+id/magicFab"
-        android:layout_alignStart="@+id/monster"
-        android:id="@+id/mapAccessFab"
+        app:srcCompat="@drawable/sword_icon"
+        android:layout_marginBottom="54dp"
+        android:id="@+id/attackFab"
+        app:backgroundTint="@android:color/holo_red_dark"
         app:elevation="14dp"
-        android:onClick="tapMapView" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/hpBar" />
 
 
 </RelativeLayout>
